@@ -112,6 +112,16 @@ renderer.setSize(sizes.width, sizes.height);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
 /**
+ * Scroll
+ */
+let scrollY = window.scrollY;
+// now we need to update that value when the user scrolls. Listen to the 'scroll' event on window
+
+window.addEventListener("scroll", () => {
+  scrollY = window.scrollY;
+});
+
+/**
  * Animate
  */
 const clock = new THREE.Clock();
@@ -125,6 +135,13 @@ const tick = () => {
     mesh.rotation.y = elapsedTime * 0.12;
   }
 
+  // animate the camera on scroll(before doing render)
+  // scrollY is positive when scrolling down, but the camera should go down on the y axis
+  camera.position.y = (-scrollY / sizes.height) * objectDistance;
+
+  // ############### CAMERA ON SCROLL ##############
+  // 'scrollY' contains the amount of pixels that have been scrolled, if we scroll 1000 pixels, the camera will go down of 1000 units in the scene
+
   // Render
   renderer.render(scene, camera);
 
@@ -133,3 +150,6 @@ const tick = () => {
 };
 
 tick();
+
+// Moving the camera with scroll
+// For this we need to retrieve the scroll value. This can be done with the window.scrollY property
