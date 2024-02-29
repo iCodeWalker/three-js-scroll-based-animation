@@ -54,6 +54,11 @@ Mesh1.position.y = -objectDistance * 0;
 Mesh2.position.y = -objectDistance * 1;
 Mesh3.position.y = -objectDistance * 2;
 
+// Positioning objects horizontally
+Mesh1.position.x = 2;
+Mesh2.position.x = -2;
+Mesh3.position.x = 2;
+
 scene.add(Mesh1, Mesh2, Mesh3);
 
 const sectionMeshes = [Mesh1, Mesh2, Mesh3];
