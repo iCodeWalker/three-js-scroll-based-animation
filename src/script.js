@@ -95,6 +95,11 @@ window.addEventListener("resize", () => {
 /**
  * Camera
  */
+
+// ### Create camera group ###
+const cameraGroup = new THREE.Group();
+scene.add(cameraGroup);
+
 // Base camera
 const camera = new THREE.PerspectiveCamera(
   35,
@@ -103,7 +108,10 @@ const camera = new THREE.PerspectiveCamera(
   100
 );
 camera.position.z = 6;
-scene.add(camera);
+// scene.add(camera);
+
+// Now add the camera to the group
+cameraGroup.add(camera);
 
 /**
  * Renderer
@@ -127,6 +135,35 @@ window.addEventListener("scroll", () => {
 });
 
 /**
+ * Scroll
+ */
+
+// We need to retrieve the cursor position. Create a cursor object with x and y properties
+const cursor = {};
+cursor.x = 0;
+cursor.y = 0;
+
+// An event listener for "mousemove"
+window.addEventListener("mousemove", (event) => {
+  // cursor.x = event.clientX;
+  // cursor.y = event.clientY;
+
+  // console.log(cursor)
+
+  // currently the amplitude depends on the size of the viewport and user with different screen resolutions will
+  // have different results.
+
+  // So we can normalize (from 0 to 1) by dividing them by the size of the viewport
+
+  // cursor.x = event.clientX / sizes.width;
+  // cursor.y = event.clientY / sizes.height;
+
+  // instead of value going from 0 to 1, it's better to have a value going from -0.5 to 0.5 for camera perspective
+  cursor.x = event.clientX / sizes.width - 0.5;
+  cursor.y = event.clientY / sizes.height - 0.5;
+});
+
+/**
  * Animate
  */
 const clock = new THREE.Clock();
@@ -143,6 +180,14 @@ const tick = () => {
   // animate the camera on scroll(before doing render)
   // scrollY is positive when scrolling down, but the camera should go down on the y axis
   camera.position.y = (-scrollY / sizes.height) * objectDistance;
+
+  // ######## Create Parallax effect ##########
+  const parallaxX = cursor.x;
+  const parallaxY = -cursor.y;
+
+  // now update the camera position
+  cameraGroup.position.x = parallaxX;
+  cameraGroup.position.y = parallaxY;
 
   // ############### CAMERA ON SCROLL ##############
   // 'scrollY' contains the amount of pixels that have been scrolled, if we scroll 1000 pixels, the camera will go down of 1000 units in the scene
