@@ -167,9 +167,14 @@ window.addEventListener("mousemove", (event) => {
  * Animate
  */
 const clock = new THREE.Clock();
+let previousTime = 0;
 
 const tick = () => {
   const elapsedTime = clock.getElapsedTime();
+  const deltaTime = elapsedTime - previousTime;
+  previousTime = elapsedTime;
+
+  console.log(deltaTime);
 
   // Before doing render we are going to apply a slow rotation using the elapsed time
   for (const mesh of sectionMeshes) {
@@ -186,8 +191,18 @@ const tick = () => {
   const parallaxY = -cursor.y;
 
   // now update the camera position
-  cameraGroup.position.x = parallaxX;
-  cameraGroup.position.y = parallaxY;
+  // cameraGroup.position.x = parallaxX;
+  // cameraGroup.position.y = parallaxY;
+
+  // For easing out the motion of camera
+  // cameraGroup.position.x += (parallaxX - cameraGroup.position.x) * 0.1;
+  // cameraGroup.position.y += (parallaxY - cameraGroup.position.y) * 0.1;
+
+  // Now for different screen rate devices also the speed of camera motion will be same
+  cameraGroup.position.x +=
+    (parallaxX - cameraGroup.position.x) * 5 * deltaTime;
+  cameraGroup.position.y +=
+    (parallaxY - cameraGroup.position.y) * 5 * deltaTime;
 
   // ############### CAMERA ON SCROLL ##############
   // 'scrollY' contains the amount of pixels that have been scrolled, if we scroll 1000 pixels, the camera will go down of 1000 units in the scene
