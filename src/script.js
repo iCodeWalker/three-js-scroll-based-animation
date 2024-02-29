@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import * as dat from "lil-gui";
+import gsap from "gsap";
 
 /**
  * Debug
@@ -168,10 +169,26 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
  * Scroll
  */
 let scrollY = window.scrollY;
+let currentSection = 0;
 // now we need to update that value when the user scrolls. Listen to the 'scroll' event on window
 
 window.addEventListener("scroll", () => {
   scrollY = window.scrollY;
+
+  // To know which section we scroll to
+  const newSection = Math.round(scrollY / sizes.height);
+
+  if (newSection != currentSection) {
+    currentSection = newSection;
+
+    gsap.to(sectionMeshes[currentSection].rotation, {
+      duration: 1.5,
+      ease: "power2.inout",
+      x: "+=6",
+      y: "+=3",
+      z: "+=1.5",
+    });
+  }
 });
 
 /**
@@ -218,8 +235,8 @@ const tick = () => {
 
   // Before doing render we are going to apply a slow rotation using the elapsed time
   for (const mesh of sectionMeshes) {
-    mesh.rotation.x = elapsedTime * 0.1;
-    mesh.rotation.y = elapsedTime * 0.12;
+    mesh.rotation.x += deltaTime * 0.1;
+    mesh.rotation.y += deltaTime * 0.12;
   }
 
   // animate the camera on scroll(before doing render)
