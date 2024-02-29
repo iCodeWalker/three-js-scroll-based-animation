@@ -10,9 +10,10 @@ const parameters = {
   materialColor: "#ffeded",
 };
 
-gui
-  .addColor(parameters, "materialColor")
-  .onChange(() => material.color.set(parameters.materialColor));
+gui.addColor(parameters, "materialColor").onChange(() => {
+  material.color.set(parameters.materialColor);
+  particleMaterial.color.set(parameters.materialColor);
+});
 
 /**
  * Base
@@ -62,6 +63,45 @@ Mesh3.position.x = 2;
 scene.add(Mesh1, Mesh2, Mesh3);
 
 const sectionMeshes = [Mesh1, Mesh2, Mesh3];
+
+/**
+ * PARTICLES
+ */
+const particleCount = 400;
+const positions = new Float32Array(particleCount * 3);
+
+// Add random coordinates to the position array
+for (let i = 0; i < particleCount; i++) {
+  // positions[i * 3] = Math.random();
+  // positions[i * 3 + 1] = Math.random();
+  // positions[i * 3 + 2] = Math.random();
+
+  // For x(horizontal) and z(depth), we can use random values that can be as much positive as they are negative
+  positions[i * 3] = (Math.random() - 0.5) * 10;
+  positions[i * 3 + 1] =
+    objectDistance * 0.5 -
+    Math.random() * objectDistance * sectionMeshes.length;
+  positions[i * 3 + 2] = (Math.random() - 0.5) * 10;
+}
+
+// Create a geometry for particle
+const particleGeometry = new THREE.BufferGeometry();
+particleGeometry.setAttribute(
+  "position",
+  new THREE.BufferAttribute(positions, 3)
+);
+
+// Create material using PointMaterial
+const particleMaterial = new THREE.PointsMaterial({
+  color: parameters.materialColor,
+  sizeAttenuation: true,
+  size: 0.03,
+});
+
+// Create Points
+
+const particles = new THREE.Points(particleGeometry, particleMaterial);
+scene.add(particles);
 
 /**
  * LIGHTS
